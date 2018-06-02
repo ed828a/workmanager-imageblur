@@ -21,9 +21,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.example.background.workers.BlurWorker;
+import com.example.background.workers.CleanupWorker;
+import com.example.background.workers.SaveImageToFileWorker;
 
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkContinuation;
 import androidx.work.WorkManager;
 
 import static com.example.background.Constants.KEY_IMAGE_URI;
@@ -40,10 +43,10 @@ public class BlurViewModel extends ViewModel {
 
     }
 
-    private Data createInputDataForUri(){
+    private Data createInputDataForUri() {
 // mImageUri was set in BlurActivity       mImageUri = Uri.parse(mStringUri);
         Data.Builder builder = new Data.Builder();
-        if(mImageUri != null){
+        if (mImageUri != null) {
             builder.putString(KEY_IMAGE_URI, mImageUri.toString());
         }
 
@@ -52,14 +55,44 @@ public class BlurViewModel extends ViewModel {
 
     /**
      * Create the WorkRequest to apply the blur and save the resulting image
+     *
      * @param blurLevel The amount to blur the image
      */
     void applyBlur(int blurLevel) {
-        OneTimeWorkRequest blurRequest =
-                new OneTimeWorkRequest.Builder(BlurWorker.class)
-                .setInputData(createInputDataForUri())
-                .build();
-        mWorkManager.enqueue(blurRequest);
+//        OneTimeWorkRequest cleanupRequest =
+//                new OneTimeWorkRequest.Builder(CleanupWorker.class).build();
+        WorkContinuation continuation =
+                mWorkManager.beginWith(OneTimeWorkRequest.from(CleanupWorker.class));
+
+        for (int i = 0; i < blurLevel; i++) {
+            OneTimeWorkRequest.Builder blurRequestBuilder =
+                    new OneTimeWorkRequest.Builder(BlurWorker.class);
+
+            if (i == 0) {
+                blurRequestBuilder.setInputData(createInputDataForUri());
+            }
+
+            continuation = continuation.then(blurRequestBuilder.build());
+        }
+
+        continuation = continuation.then(OneTimeWorkRequest.from(SaveImageToFileWorker.class));
+
+        continuation.enqueue(); // actually start the work
+
+        // Add WorkRequest to blur the image
+//        OneTimeWorkRequest blurRequest = new OneTimeWorkRequest.Builder(BlurWorker.class)
+//                .setInputData(createInputDataForUri())
+//                .build();
+//        continuation = continuation.then(blurRequest);
+
+//        OneTimeWorkRequest saveImageToFileRequest =
+//                new OneTimeWorkRequest.Builder(SaveImageToFileWorker.class).build();
+
+//        continuation.then(blurRequest)
+//                .then(saveImageToFileRequest)
+//                .enqueue();
+
+//        mWorkManager.enqueue(blurRequest);
     }
 
     private Uri uriOrNull(String uriString) {

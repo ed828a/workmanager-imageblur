@@ -22,7 +22,7 @@ class BlurWorker: Worker() {
     override fun doWork(): WorkerResult {
 
         val context = applicationContext
-        var resourceUri = inputData.getString(Constants.KEY_IMAGE_URI, null)
+        val resourceUri = inputData.getString(Constants.KEY_IMAGE_URI, null)
         if (resourceUri.isEmpty()){
             throw IllegalArgumentException("Invalid input uri") as Throwable
         } else {
@@ -31,17 +31,6 @@ class BlurWorker: Worker() {
 
 
         return try {
-
-//            val tempBitmap = GlideApp.with(applicationContext)
-//                    .asBitmap().load(Uri.parse(resourceUri)).into(400, 600).get()
-//            val outputUri2 = WorkerUtils.writeBitmapToFile(applicationContext, tempBitmap)
-//            Log.e(Constants.TAG, outputUri2.toString())
-//            val temp = WorkerUtils.blurBitmap(tempBitmap, applicationContext)
-//            val outputUri3 =WorkerUtils.writeBitmapToFile(applicationContext, temp)
-//            WorkerUtils.makeStatusNotification(outputUri3.toString(), applicationContext)
-//            Log.e(Constants.TAG, outputUri3.toString())
-
-//            val picture = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.maremma)
 
             val resolver = applicationContext.contentResolver
             val picture = BitmapFactory.decodeStream(resolver.openInputStream(Uri.parse(resourceUri)))
