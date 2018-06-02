@@ -27,6 +27,7 @@ import com.example.background.workers.SaveImageToFileWorker;
 
 import java.util.List;
 
+import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -90,6 +91,9 @@ public class BlurViewModel extends ViewModel {
      */
     void applyBlur(int blurLevel) {
 
+
+
+
         // it will now only ever blur one picture at a time.
         WorkContinuation continuation =
                 mWorkManager.beginUniqueWork(IMAGE_MANIPULATION_WORK_NAME,
@@ -107,9 +111,15 @@ public class BlurViewModel extends ViewModel {
             continuation = continuation.then(blurRequestBuilder.build());
         }
 
+        // Create constraint
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresCharging(true)
+                .build();
+
         OneTimeWorkRequest saveImageToFileRequest =
                 new OneTimeWorkRequest.Builder(SaveImageToFileWorker.class)
                         .addTag(TAG_OUTPUT)
+                        .setConstraints(constraints)
                         .build();
         continuation = continuation.then(saveImageToFileRequest);
 //        continuation = continuation.then(OneTimeWorkRequest.from(SaveImageToFileWorker.class));

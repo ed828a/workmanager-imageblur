@@ -20,8 +20,8 @@ class SaveImageToFileWorker: Worker() {
     val DATE_FORMATTER = SimpleDateFormat("yyyy.MM.dd 'at' HH:MM:SS z", Locale.getDefault())
 
     override fun doWork(): WorkerResult {
-        WorkerUtils.makeStatusNotification("Doing <WORK NAME>", applicationContext);
-        WorkerUtils.sleep();
+        WorkerUtils.makeStatusNotification("Doing <SaveImageToFileWorker>", applicationContext)
+        WorkerUtils.sleep()
 
         val resolver = applicationContext.contentResolver
         val resourceUri = inputData.getString(Constants.KEY_IMAGE_URI, null)
