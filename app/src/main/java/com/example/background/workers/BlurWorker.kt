@@ -20,6 +20,8 @@ import com.example.background.R
 class BlurWorker: Worker() {
 
     override fun doWork(): WorkerResult {
+        WorkerUtils.makeStatusNotification("Doing <BlurWorker>", applicationContext);
+        WorkerUtils.sleep();
 
         val context = applicationContext
         val resourceUri = inputData.getString(Constants.KEY_IMAGE_URI, null)

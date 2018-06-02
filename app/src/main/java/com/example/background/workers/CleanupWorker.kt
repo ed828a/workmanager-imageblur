@@ -3,7 +3,6 @@ package com.example.background.workers
 import android.util.Log
 import androidx.work.Worker
 import com.example.background.Constants
-import com.example.background.Constants.TAG
 import java.io.File
 
 /*
@@ -13,9 +12,8 @@ import java.io.File
 class CleanupWorker: Worker() {
 
     override fun doWork(): WorkerResult {
-
-        outputData = inputData
-
+        WorkerUtils.makeStatusNotification("Doing <CleanupWorker>", applicationContext);
+        WorkerUtils.sleep();
         try {
             val outputDirectory = File(applicationContext.filesDir, Constants.OUTPUT_PATH)
             if (outputDirectory.exists()){

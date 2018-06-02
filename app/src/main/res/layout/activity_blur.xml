@@ -86,10 +86,11 @@
 
             <Button
                 android:id="@+id/cancel_button"
-                android:layout_width="11dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel_work"
-                android:visibility="gone" />
+                android:visibility="invisible"
+                tools:visibility="visible"/>
 
             <ProgressBar
                 android:id="@+id/progress_bar"
